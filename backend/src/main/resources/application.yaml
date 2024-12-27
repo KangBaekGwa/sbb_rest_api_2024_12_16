@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Baekgwa SBB
+    name: Baekgwa_SBB
   profiles:
     active: prod
   security:
@@ -40,6 +40,12 @@ spring:
       host: ${SBB_REDIS_HOST}
       port: ${SBB_REDIS_PORT}
       password: ${SBB_REDIS_PASSWORD}
+  jwt:
+    secret: ${SBB_JWT_SECRET_KEY}
+    access:
+      expiredTime: ${JWT_ACCESS_EXPIRED_MS}
+    refresh:
+      expiredTime: ${JWT_REFRESH_EXPIRED_MS}
 
 server:
   port: 8080
