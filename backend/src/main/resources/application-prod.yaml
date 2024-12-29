@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: prod
   datasource:
     url: ${SBB_DB_URL}
     username: ${SBB_DB_USERNAME}
