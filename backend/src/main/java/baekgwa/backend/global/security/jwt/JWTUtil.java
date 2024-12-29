@@ -19,17 +19,11 @@ import org.springframework.stereotype.Component;
 public class JWTUtil {
 
     private final SecretKey secretKey;
-    private final Long accessExpiredMs;
-    private final Long refreshExpiredMs;
 
     public JWTUtil(
-            @Value("${spring.jwt.secret}") String secret,
-            @Value("${spring.jwt.access.expiredTime}") Long accessExpiredMs,
-            @Value("${spring.jwt.refresh.expiredTime}") Long refreshExpiredMs) {
+            @Value("${spring.jwt.secret}") String secret) {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
                 SIG.HS256.key().build().getAlgorithm());
-        this.accessExpiredMs = accessExpiredMs;
-        this.refreshExpiredMs = refreshExpiredMs;
     }
 
     public String getUuid(String token) {
@@ -47,9 +41,7 @@ public class JWTUtil {
                 .getExpiration().before(new Date());
     }
 
-    public String createJwt(String category, String uuid, String role) {
-        long expiredMs = category.equals(ACCESS) ? accessExpiredMs : refreshExpiredMs;
-
+    public String createJwt(String category, String uuid, String role, long expiredMs) {
         return Jwts.builder()
                 .claim("category", category)
                 .claim("uuid", uuid)

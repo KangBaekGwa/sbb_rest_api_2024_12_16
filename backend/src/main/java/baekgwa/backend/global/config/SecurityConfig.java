@@ -4,8 +4,10 @@ import baekgwa.backend.global.security.filter.JWTFilter;
 import baekgwa.backend.global.security.filter.LoginFilter;
 import baekgwa.backend.global.security.filter.ReissueJWTFilter;
 import baekgwa.backend.global.security.jwt.JWTUtil;
+import baekgwa.backend.model.redis.RedisRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,8 +24,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
- * Authentication Manager : 인증을 처리하는 인터페이스.
- * PasswordEncoder : Security 내부에서 사용할, 암호화를 검증하는데 사용하는 인터페이스.
+ * Authentication Manager : 인증을 처리하는 인터페이스. PasswordEncoder : Security 내부에서 사용할, 암호화를 검증하는데 사용하는
+ * 인터페이스.
  */
 @Configuration
 @EnableWebSecurity
@@ -31,6 +33,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 public class SecurityConfig {
 
     private final JWTUtil jwtUtil;
+    private final RedisRepository redisRepository;
+    @Value("${spring.jwt.refresh.expiredTime}")
+    private long refreshExpiredMs;
+    @Value("${spring.jwt.access.expiredTime}")
+    private long accessExpiredMs;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
@@ -60,10 +67,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
-        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil);
+        JWTFilter jwtFilter = new JWTFilter(jwtUtil);
+
+        LoginFilter loginFilter = new LoginFilter(
+                authenticationManager(authenticationConfiguration), redisRepository, jwtUtil,
+                refreshExpiredMs, accessExpiredMs);
         loginFilter.setFilterProcessesUrl("/login"); //로그인 경로 지정
 
-        ReissueJWTFilter reissueJWTFilter = new ReissueJWTFilter(jwtUtil);
+        ReissueJWTFilter reissueJWTFilter = new ReissueJWTFilter(
+                redisRepository, jwtUtil, refreshExpiredMs, accessExpiredMs);
         reissueJWTFilter.setFilterProcessesUrl("/reissue");
 
         http
@@ -71,12 +83,12 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/join").permitAll()
-                        .anyRequest().authenticated())
+                        .requestMatchers("/admin").authenticated()
+                        .anyRequest().permitAll())
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
+                .addFilterBefore(jwtFilter, LoginFilter.class)
                 .addFilterBefore(reissueJWTFilter, JWTFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
 

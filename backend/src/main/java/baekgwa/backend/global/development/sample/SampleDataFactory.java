@@ -2,6 +2,7 @@ package baekgwa.backend.global.development.sample;
 
 import baekgwa.backend.model.user.User;
 import baekgwa.backend.model.user.UserRepository;
+import baekgwa.backend.model.user.UserRole;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -31,7 +32,7 @@ public class SampleDataFactory {
                 .username("테스터")
                 .email("test@test.com")
                 .password(passwordEncoder.encode("1234"))
-                .role("ROLE_ADMIN")
+                .role(UserRole.ROLE_USER)
                 .uuid(UUID.randomUUID().toString())
                 .build();
 

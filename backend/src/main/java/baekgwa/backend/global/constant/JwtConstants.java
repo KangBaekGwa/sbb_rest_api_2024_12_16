@@ -6,4 +6,5 @@ package baekgwa.backend.global.constant;
 public class JwtConstants {
     public static final String ACCESS = "access";
     public static final String REFRESH = "refresh";
+    public static final String REFRESH_KEY = "refreshToken";
 }

@@ -3,9 +3,11 @@ package baekgwa.backend.global.security.filter;
 
 import static baekgwa.backend.global.constant.JwtConstants.ACCESS;
 import static baekgwa.backend.global.constant.JwtConstants.REFRESH;
+import static baekgwa.backend.global.constant.JwtConstants.REFRESH_KEY;
 
 import baekgwa.backend.global.security.jwt.JWTUtil;
 import baekgwa.backend.global.security.user.CustomUserDetails;
+import baekgwa.backend.model.redis.RedisRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
@@ -14,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +35,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final RedisRepository redisRepository;
     private final JWTUtil jwtUtil;
+    private final long refreshExpiredMs;
+    private final long accessExpiredMs;
 
     @Override
     public Authentication attemptAuthentication(
@@ -60,8 +66,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String access = jwtUtil.createJwt("access", uuid, role);
-        String refresh = jwtUtil.createJwt("refresh", uuid, role);
+        String access = jwtUtil.createJwt("access", uuid, role, accessExpiredMs);
+        String refresh = jwtUtil.createJwt("refresh", uuid, role, refreshExpiredMs);
+
+        redisRepository.delete(REFRESH_KEY + uuid);
+        redisRepository.save(REFRESH_KEY + uuid, refresh, refreshExpiredMs, TimeUnit.MILLISECONDS);
 
         response.setHeader(ACCESS, access);
         response.addCookie(createCookie(REFRESH, refresh));
@@ -86,7 +95,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
+        cookie.setMaxAge((int) refreshExpiredMs/1000);
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
