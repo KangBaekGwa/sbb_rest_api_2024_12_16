@@ -2,9 +2,12 @@ package baekgwa.backend.model.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,14 +32,15 @@ public class User {
 
     private String password;
 
-    private String role;
+    @Enumerated(value = EnumType.STRING)
+    private UserRole role;
 
     @Column(unique = true)
     private String uuid;
 
     @Builder
     private User(Long id, String loginId, String username, String email, String password,
-            String role,
+            UserRole role,
             String uuid) {
         this.id = id;
         this.loginId = loginId;
@@ -45,5 +49,17 @@ public class User {
         this.password = password;
         this.role = role;
         this.uuid = uuid;
+    }
+
+    public static User createNewUser(String loginId, String username, String email, String password) {
+        return User
+                .builder()
+                .loginId(loginId)
+                .username(username)
+                .email(email)
+                .password(password)
+                .role(UserRole.ROLE_USER)
+                .uuid(UUID.randomUUID().toString())
+                .build();
     }
 }

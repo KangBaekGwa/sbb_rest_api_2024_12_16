@@ -5,6 +5,7 @@ import static baekgwa.backend.global.constant.JwtConstants.ACCESS;
 import baekgwa.backend.global.security.jwt.JWTUtil;
 import baekgwa.backend.global.security.user.CustomUserDetails;
 import baekgwa.backend.model.user.User;
+import baekgwa.backend.model.user.UserRole;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -63,7 +64,7 @@ public class JWTFilter extends OncePerRequestFilter {
         User userData = User
                 .builder()
                 .uuid(uuid)
-                .role(role)
+                .role(UserRole.valueOf(role))
                 .build();
 
         CustomUserDetails customUserDetails = new CustomUserDetails(userData);
