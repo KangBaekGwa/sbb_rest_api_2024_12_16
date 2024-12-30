@@ -1,0 +1,15 @@
+==== Request Fields
+|===
+|Path|Type|Optional|유효성|Description
+
+{{#fields}}
+
+|{{#tableCellContent}}`+{{path}}+`{{/tableCellContent}}
+|{{#tableCellContent}}`+{{type}}+`{{/tableCellContent}}
+|{{#tableCellContent}}{{#optional}}true{{/optional}}{{/tableCellContent}}
+|{{#tableCellContent}}{{#validity}}{{validity}}{{/validity}}{{^validity}}N/A{{/validity}}{{/tableCellContent}}
+|{{#tableCellContent}}{{description}}{{/tableCellContent}}
+
+{{/fields}}
+
+|===

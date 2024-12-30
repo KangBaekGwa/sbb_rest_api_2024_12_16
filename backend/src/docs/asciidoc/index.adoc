@@ -1,0 +1,14 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= 백과 BDD 서비스 API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Authentication]]
+== Authentication API
+include::api/user.adoc[]
