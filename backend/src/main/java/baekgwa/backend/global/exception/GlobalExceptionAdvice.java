@@ -11,6 +11,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -66,6 +67,17 @@ public class GlobalExceptionAdvice {
                 ErrorCode.NOT_SUPPORTED_METHOD.getCode(),
                 null);
         return new ResponseEntity<>(response, ErrorCode.NOT_SUPPORTED_METHOD.getHttpStatus());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<BaseResponse<Void>> noResourceFoundException(NoResourceFoundException e) {
+        BaseResponse<Void> response = new BaseResponse<>(
+                ErrorCode.NOT_FOUND_URL.getHttpStatus(),
+                ErrorCode.NOT_FOUND_URL.getIsSuccess(),
+                ErrorCode.NOT_FOUND_URL.getMessage(),
+                ErrorCode.NOT_FOUND_URL.getCode(),
+                null);
+        return new ResponseEntity<>(response, ErrorCode.NOT_FOUND_URL.getHttpStatus());
     }
 
     /**
