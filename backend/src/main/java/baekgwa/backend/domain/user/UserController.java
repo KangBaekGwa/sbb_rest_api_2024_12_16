@@ -18,7 +18,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public BaseResponse<Void> signup(
-            @Valid @RequestBody UserDto.Signup signup) {
+            @Valid @RequestBody UserRequest.Signup signup) {
         userService.signup(signup);
         return BaseResponse.ok(SuccessCode.SIGNUP_SUCCESS);
     }

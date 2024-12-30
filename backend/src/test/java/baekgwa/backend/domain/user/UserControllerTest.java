@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import baekgwa.backend.domain.user.UserDto.Signup;
+import baekgwa.backend.domain.user.UserRequest.Signup;
 import baekgwa.backend.global.exception.CustomException;
 import baekgwa.backend.global.response.ErrorCode;
 import baekgwa.backend.global.response.SuccessCode;
@@ -32,7 +32,7 @@ class UserControllerTest extends MockControllerTestSupporter {
     @Test
     void signup1() throws Exception {
         // given
-        Signup dto = Signup
+        Signup request = Signup
                 .builder()
                 .username("테스트유저")
                 .email("test@test.com")
@@ -42,7 +42,7 @@ class UserControllerTest extends MockControllerTestSupporter {
 
         // when // then
         mockMvc.perform(post("/user/signup")
-                    .content(objectMapper.writeValueAsString(dto))
+                    .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())

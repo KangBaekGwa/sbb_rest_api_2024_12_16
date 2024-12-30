@@ -3,7 +3,7 @@ package baekgwa.backend.domain.user;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import baekgwa.backend.domain.user.UserDto.Signup;
+import baekgwa.backend.domain.user.UserRequest.Signup;
 import baekgwa.backend.global.exception.CustomException;
 import baekgwa.backend.global.response.ErrorCode;
 import baekgwa.backend.integration.SpringBootTestSupporter;

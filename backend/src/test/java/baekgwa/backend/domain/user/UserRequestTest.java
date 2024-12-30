@@ -2,7 +2,7 @@ package baekgwa.backend.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import baekgwa.backend.domain.user.UserDto.Signup;
+import baekgwa.backend.domain.user.UserRequest.Signup;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class UserDtoTest {
+class UserRequestTest {
 
     private static Validator validator;
 

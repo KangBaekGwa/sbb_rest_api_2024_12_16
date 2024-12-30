@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void signup(UserDto.Signup signup) {
+    public void signup(UserRequest.Signup signup) {
 
         User newUser = User.createNewUser(
                 signup.getLoginId(),
