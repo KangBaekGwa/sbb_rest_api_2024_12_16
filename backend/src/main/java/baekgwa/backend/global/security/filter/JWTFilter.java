@@ -2,17 +2,19 @@ package baekgwa.backend.global.security.filter;
 
 import static baekgwa.backend.global.constant.JwtConstants.ACCESS;
 
+import baekgwa.backend.global.response.BaseResponse;
+import baekgwa.backend.global.response.ErrorCode;
 import baekgwa.backend.global.security.jwt.JWTUtil;
 import baekgwa.backend.global.security.user.CustomUserDetails;
 import baekgwa.backend.model.user.User;
 import baekgwa.backend.model.user.UserRole;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -39,22 +42,16 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_EXPIRED);
             return;
         }
 
-        // 토큰이 access인지 확인 (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
         if (!category.equals(ACCESS)) {
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            writeErrorResponse(response, ErrorCode.INVALID_ACCESS_TOKEN);
             return;
         }
 
@@ -73,5 +70,13 @@ public class JWTFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
+    }
+
+    private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+        BaseResponse<Void> errorResponse = BaseResponse.fail(errorCode);
+        response.setContentType("application/json");
+        response.setStatus(errorCode.getHttpStatus().value());
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

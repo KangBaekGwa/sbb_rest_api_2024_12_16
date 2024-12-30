@@ -5,6 +5,7 @@ import baekgwa.backend.global.security.filter.LoginFilter;
 import baekgwa.backend.global.security.filter.ReissueJWTFilter;
 import baekgwa.backend.global.security.jwt.JWTUtil;
 import baekgwa.backend.model.redis.RedisRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,7 @@ public class SecurityConfig {
 
     private final JWTUtil jwtUtil;
     private final RedisRepository redisRepository;
+    private final ObjectMapper objectMapper;
     @Value("${spring.jwt.refresh.expiredTime}")
     private long refreshExpiredMs;
     @Value("${spring.jwt.access.expiredTime}")
@@ -67,15 +69,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
-        JWTFilter jwtFilter = new JWTFilter(jwtUtil);
+        JWTFilter jwtFilter = new JWTFilter(jwtUtil, objectMapper);
 
         LoginFilter loginFilter = new LoginFilter(
                 authenticationManager(authenticationConfiguration), redisRepository, jwtUtil,
-                refreshExpiredMs, accessExpiredMs);
+                refreshExpiredMs, accessExpiredMs, objectMapper);
         loginFilter.setFilterProcessesUrl("/login"); //로그인 경로 지정
 
         ReissueJWTFilter reissueJWTFilter = new ReissueJWTFilter(
-                redisRepository, jwtUtil, refreshExpiredMs, accessExpiredMs);
+                redisRepository, jwtUtil, refreshExpiredMs, accessExpiredMs, objectMapper);
         reissueJWTFilter.setFilterProcessesUrl("/reissue");
 
         http
