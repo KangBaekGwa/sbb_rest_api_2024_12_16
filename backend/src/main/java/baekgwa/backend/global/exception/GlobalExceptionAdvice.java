@@ -5,6 +5,7 @@ import baekgwa.backend.global.response.ErrorCode;
 import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
@@ -97,6 +98,32 @@ public class GlobalExceptionAdvice {
 
         log.error(Arrays.toString(e.getStackTrace()));
         return new ResponseEntity<>(response, ErrorCode.FAIL.getHttpStatus());
+    }
+
+    /**
+     * 저장 / 업데이트 등, 실행 시 데이터 무결성 검증 실패로 인한 오류 발생
+     * 1. NOT NULL 제약 조건 위반
+     * 2. 유니크(Unique) 제약 조건 위반
+     * 3. 외래 키(Foreign Key) 제약 조건 위반
+     * 4. 참조 무결성 위반 (Foreign Key Deletion or Update)
+     * 5. 데이터 타입 위반
+     * 6. 문자열 길이 초과
+     * 7. 기타 데이터베이스 무결성 제약 조건 위반
+     * 등등
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<BaseResponse<Void>> dataIntegrityViolation(DataIntegrityViolationException e) {
+        //todo : 추가 로깅 저장 필요.
+
+        BaseResponse<Void> response = new BaseResponse<>(
+                ErrorCode.INVALID_REQUEST_DATA.getHttpStatus(),
+                ErrorCode.INVALID_REQUEST_DATA.getIsSuccess(),
+                ErrorCode.INVALID_REQUEST_DATA.getMessage(),
+                ErrorCode.INVALID_REQUEST_DATA.getCode(),
+                null);
+        return new ResponseEntity<>(response, ErrorCode.INVALID_REQUEST_DATA.getHttpStatus());
     }
 }
 

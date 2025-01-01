@@ -27,10 +27,6 @@ public class UserServiceImpl implements UserService {
                 signup.getEmail(),
                 passwordEncoder.encode(signup.getPassword()));
 
-        try {
-            userRepository.save(newUser);
-        } catch (DataIntegrityViolationException ignored) {
-            throw new CustomException(ErrorCode.DUPLICATED_SIGNUP_DATA);
-        }
+        userRepository.save(newUser);
     }
 }
