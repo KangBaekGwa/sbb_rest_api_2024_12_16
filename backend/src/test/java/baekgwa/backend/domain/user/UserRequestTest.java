@@ -41,7 +41,7 @@ class UserRequestTest {
         assertThat(validate).hasSize(0);
     }
 
-    @DisplayName("올바르지 않은 회원가입 정도는 오류가 발생됩니다.")
+    @DisplayName("올바르지 않은 회원가입 정보는 오류가 발생됩니다.")
     @Test
     void signup2() {
         // given
