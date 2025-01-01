@@ -1,11 +1,12 @@
 ==== Query Parameter
 |===
-|Parameter|Description|Optional|Default
+|Parameter|Description|Optional|유효성|Default
 
 {{#parameters}}
 |{{#tableCellContent}}`+{{name}}+`{{/tableCellContent}}
 |{{#tableCellContent}}{{description}}{{/tableCellContent}}
 |{{#tableCellContent}}{{#optional}}true{{/optional}}{{^optional}}false{{/optional}}{{/tableCellContent}}
+|{{#tableCellContent}}{{#validity}}{{validity}}{{/validity}}{{^validity}}N/A{{/validity}}{{/tableCellContent}}
 |{{#tableCellContent}}{{#default}}{{default}}{{/default}}{{^default}}N/A{{/default}}{{/tableCellContent}}
 
 {{/parameters}}

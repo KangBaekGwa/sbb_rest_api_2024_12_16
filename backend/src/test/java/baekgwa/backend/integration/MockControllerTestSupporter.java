@@ -3,6 +3,8 @@ package baekgwa.backend.integration;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 
+import baekgwa.backend.domain.board.BoardController;
+import baekgwa.backend.domain.board.BoardService;
 import baekgwa.backend.domain.user.UserController;
 import baekgwa.backend.domain.user.UserService;
 import baekgwa.backend.global.config.SecurityConfig;
@@ -13,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -24,7 +25,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @WebMvcTest(controllers = {
-        UserController.class
+        UserController.class,
+        BoardController.class
 })
 @Import({
         SecurityConfig.class,
@@ -45,6 +47,9 @@ public abstract class MockControllerTestSupporter {
 
     @MockitoBean
     protected UserService userService;
+
+    @MockitoBean
+    protected BoardService boardService;
 
     @MockitoBean
     protected RedisRepository redisRepository;

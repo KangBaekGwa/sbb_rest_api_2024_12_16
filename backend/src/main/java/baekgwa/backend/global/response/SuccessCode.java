@@ -12,6 +12,9 @@ public enum SuccessCode {
     SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입 성공"),
     LOGIN_SUCCESS(HttpStatus.OK, "로그인 성공"),
 
+    //Board Domain
+    FIND_BOARD_LIST_SUCCESS(HttpStatus.OK, "게시판 조회 성공"),
+
     //공통
     SUCCESS(HttpStatus.OK, "요청 응답 성공"),
     REISSUE_TOKEN_SUCCESS(HttpStatus.OK, "Token 재발급 성공"),

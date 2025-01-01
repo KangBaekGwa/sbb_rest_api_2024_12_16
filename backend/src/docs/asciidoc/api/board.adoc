@@ -1,0 +1,10 @@
+[[list]]
+=== 게시판 글 조회
+
+==== HTTP Request
+include::{snippets}/board/list/http-request.adoc[]
+include::{snippets}/board/list/query-parameters.adoc[]
+
+==== Http Response
+include::{snippets}/board/list/http-response.adoc[]
+include::{snippets}/board/list/response-fields.adoc[]

@@ -9,6 +9,9 @@ endif::[]
 :toclevels: 2
 :sectlinks:
 
-[[Authentication]]
-== Authentication API
+[[User]]
+== 사용자 API
 include::api/user.adoc[]
+[[Board]]
+== 게시판 API
+include::api/board.adoc[]
