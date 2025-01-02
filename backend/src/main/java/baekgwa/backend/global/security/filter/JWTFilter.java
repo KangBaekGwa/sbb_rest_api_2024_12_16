@@ -10,6 +10,7 @@ import baekgwa.backend.model.user.User;
 import baekgwa.backend.model.user.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -26,6 +28,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * 입력받은, Access Token 으로, Security Context Holder 에, 인증을 추가.
  */
 @RequiredArgsConstructor
+@Component
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -46,6 +49,9 @@ public class JWTFilter extends OncePerRequestFilter {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
             writeErrorResponse(response, ErrorCode.ACCESS_TOKEN_EXPIRED);
+            return;
+        } catch (JwtException e) {
+            writeErrorResponse(response, ErrorCode.INVALID_ACCESS_TOKEN);
             return;
         }
 

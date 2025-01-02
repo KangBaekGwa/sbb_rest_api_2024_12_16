@@ -39,7 +39,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getLoginId();
+        return user.getUuid();
     }
 
     @Override
@@ -60,9 +60,5 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public String getUuid() {
-        return user.getUuid();
     }
 }

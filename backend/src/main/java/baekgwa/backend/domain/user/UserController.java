@@ -2,6 +2,7 @@ package baekgwa.backend.domain.user;
 
 import baekgwa.backend.global.response.BaseResponse;
 import baekgwa.backend.global.response.SuccessCode;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +19,9 @@ public class UserController {
 
     @PostMapping("/signup")
     public BaseResponse<Void> signup(
-            @Valid @RequestBody UserRequest.Signup signup) {
+            @Valid @RequestBody UserRequest.Signup signup,
+            HttpServletResponse response) {
         userService.signup(signup);
-        return BaseResponse.ok(SuccessCode.SIGNUP_SUCCESS);
+        return BaseResponse.ok(response, SuccessCode.SIGNUP_SUCCESS);
     }
 }

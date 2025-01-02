@@ -11,6 +11,7 @@ import baekgwa.backend.global.security.jwt.JWTUtil;
 import baekgwa.backend.model.redis.RedisRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -70,6 +71,9 @@ public class ReissueJWTFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             writeErrorResponse(response, ErrorCode.REFRESH_TOKEN_EXPIRED);
             return;
+        } catch (JwtException e) {
+            writeErrorResponse(response, ErrorCode.INVALID_ACCESS_TOKEN);
+            return;
         }
 
         String category = jwtUtil.getCategory(refresh);
@@ -92,7 +96,7 @@ public class ReissueJWTFilter extends OncePerRequestFilter {
         redisRepository.save(REFRESH_KEY + uuid, newRefresh, refreshExpiredMs,
                 TimeUnit.MILLISECONDS);
 
-        BaseResponse<Void> successResponse = BaseResponse.ok(SuccessCode.REISSUE_TOKEN_SUCCESS);
+        BaseResponse<Void> successResponse = BaseResponse.ok(response, SuccessCode.REISSUE_TOKEN_SUCCESS);
         response.setHeader(ACCESS, newAccess);
         response.addCookie(createCookie(REFRESH, newRefresh));
         response.setContentType("application/json");
