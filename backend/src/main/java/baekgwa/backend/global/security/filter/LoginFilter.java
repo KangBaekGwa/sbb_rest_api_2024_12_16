@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -68,7 +67,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             throws IOException {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        String uuid = customUserDetails.getUuid();
+        String uuid = customUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -81,7 +80,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         redisRepository.delete(REFRESH_KEY + uuid);
         redisRepository.save(REFRESH_KEY + uuid, refresh, refreshExpiredMs, TimeUnit.MILLISECONDS);
 
-        BaseResponse<Void> successResponse = BaseResponse.ok(SuccessCode.LOGIN_SUCCESS);
+        BaseResponse<Void> successResponse = BaseResponse.ok(response, SuccessCode.LOGIN_SUCCESS);
         response.setHeader(ACCESS, access);
         response.addCookie(createCookie(REFRESH, refresh));
         response.setContentType("application/json");

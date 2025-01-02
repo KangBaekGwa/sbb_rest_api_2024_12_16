@@ -14,6 +14,7 @@ public enum SuccessCode {
 
     //Board Domain
     FIND_BOARD_LIST_SUCCESS(HttpStatus.OK, "게시판 조회 성공"),
+    CREATE_NEW_QUESTION_SUCCESS(HttpStatus.CREATED, "신규 질문 등록 성공"),
 
     //공통
     SUCCESS(HttpStatus.OK, "요청 응답 성공"),

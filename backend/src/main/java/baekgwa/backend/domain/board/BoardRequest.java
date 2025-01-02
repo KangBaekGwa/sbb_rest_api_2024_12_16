@@ -4,7 +4,11 @@ import baekgwa.backend.global.annotation.validation.board.OnlyBoardSort;
 import baekgwa.backend.global.annotation.validation.board.OnlyCategory;
 import baekgwa.backend.model.category.CategoryType;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 public class BoardRequest {
@@ -25,5 +29,21 @@ public class BoardRequest {
 
         @OnlyCategory
         private String category = CategoryType.QUESTION.name();
+    }
+
+    @Getter
+    @NoArgsConstructor
+    public static class NewQuestion {
+        @Size(min = 1, max = 200, message = "제목은 1글자 이상, 200자 미만 입니다.")
+        private String subject;
+
+        @NotBlank(message = "질문 내용은 필수값 입니다.")
+        private String content;
+
+        @Builder
+        private NewQuestion(String subject, String content) {
+            this.subject = subject;
+            this.content = content;
+        }
     }
 }

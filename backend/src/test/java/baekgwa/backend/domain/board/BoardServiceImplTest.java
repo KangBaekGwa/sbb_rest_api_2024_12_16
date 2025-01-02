@@ -3,11 +3,13 @@ package baekgwa.backend.domain.board;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import baekgwa.backend.domain.board.BoardResponse.Content;
+import baekgwa.backend.domain.board.BoardResponse.NewQuestion;
 import baekgwa.backend.integration.SpringBootTestSupporter;
 import baekgwa.backend.model.answer.Answer;
 import baekgwa.backend.model.category.CategoryType;
 import baekgwa.backend.model.question.Question;
 import baekgwa.backend.model.user.User;
+import java.util.Optional;
 import java.util.Random;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,6 +61,35 @@ class BoardServiceImplTest extends SpringBootTestSupporter {
                     assertThat(data.getAnswerCount()).isBetween(2L, 5L);
                     assertThat(data.getCreatedDate()).isNotNull();
                 });
+    }
+
+    @DisplayName("새로운 질문을 등록합니다.")
+    @Test
+    void createNewQuestion() {
+        // given
+        User savedUser = userRepository.save(
+                User.createNewUser("test", "test", "test@test.com", "1234"));
+
+        String subject = "제목";
+        String content = "내용";
+        BoardRequest.NewQuestion newQuestion = BoardRequest.NewQuestion
+                .builder()
+                .subject(subject)
+                .content(content)
+                .build();
+        em.flush();
+        em.clear();
+
+        // when
+        NewQuestion data = boardService.createNewQuestion(newQuestion, savedUser.getUuid());
+
+        // then
+        assertThat(data).isNotNull();
+        Optional<Question> findData = questionRepository.findById(data.getQuestionId());
+        assertThat(findData).isPresent();
+        assertThat(findData.get())
+                .extracting("subject", "content", "authorId")
+                .containsExactly(subject, content, savedUser.getId());
     }
 
     private Question createQuestion(String subject, String content, Long authorId) {

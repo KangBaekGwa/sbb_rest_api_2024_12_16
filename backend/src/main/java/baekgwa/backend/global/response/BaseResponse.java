@@ -1,6 +1,7 @@
 package baekgwa.backend.global.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 
 public record BaseResponse<T>(
@@ -11,7 +12,8 @@ public record BaseResponse<T>(
         T data
 ) {
 
-    public static <T> BaseResponse<T> ok (SuccessCode code, T data) {
+    public static <T> BaseResponse<T> ok (HttpServletResponse response, SuccessCode code, T data) {
+        response.setStatus(code.getHttpStatus().value());
         return new BaseResponse<>(
                 code.getHttpStatus(),
                 code.getIsSuccess(),
@@ -31,7 +33,8 @@ public record BaseResponse<T>(
         );
     }
 
-    public static BaseResponse<Void> ok(SuccessCode code) {
+    public static BaseResponse<Void> ok(HttpServletResponse response, SuccessCode code) {
+        response.setStatus(code.getHttpStatus().value());
         return new BaseResponse<>(
                 code.getHttpStatus(),
                 code.getIsSuccess(),

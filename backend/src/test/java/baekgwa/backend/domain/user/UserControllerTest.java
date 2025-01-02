@@ -45,7 +45,7 @@ class UserControllerTest extends MockControllerTestSupporter {
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.isSuccess").value(SuccessCode.SIGNUP_SUCCESS.getIsSuccess()))
                 .andExpect(jsonPath("$.message").value(SuccessCode.SIGNUP_SUCCESS.getMessage()))
                 .andExpect(jsonPath("$.code").value(SuccessCode.SIGNUP_SUCCESS.getCode()))
@@ -55,8 +55,7 @@ class UserControllerTest extends MockControllerTestSupporter {
                 requestFields(
                         fieldWithPath("loginId").type(JsonFieldType.STRING)
                                 .description("로그인 아이디")
-                                .attributes(key("validity").value("로그인 아이디는 5자리 ~ 20자리 사이입니다. 로그인 아이디는 영문(대소문자 구분)과 숫자만 허용합니다.")),
-                        fieldWithPath("password").type(JsonFieldType.STRING)
+                                .attributes(key("validity").value("로그인 아이디는 5자리 ~ 20자리 사이입니다. 로그인 아이디는 영문(대소문자 구분)과 숫자만 허용합니다.")),                        fieldWithPath("password").type(JsonFieldType.STRING)
                                 .description("패스워드")
                                 .attributes(key("validity").value("비밀번호는 8자리 ~ 20자리 사이 입니다. 비밀번호는 특수문자를 반드시 포함하여야 합니다.")),
                         fieldWithPath("email").type(JsonFieldType.STRING)

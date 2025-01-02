@@ -1,9 +1,15 @@
 package baekgwa.backend.domain.board;
 
 import baekgwa.backend.domain.board.BoardResponse.ContentDetails;
+import baekgwa.backend.domain.board.BoardResponse.NewQuestion;
+import baekgwa.backend.global.exception.CustomException;
+import baekgwa.backend.global.response.ErrorCode;
 import baekgwa.backend.model.category.CategoryType;
+import baekgwa.backend.model.question.Question;
 import baekgwa.backend.model.question.QuestionRepository;
 import baekgwa.backend.model.question.projection.QuestionWithAnswerCountProjection;
+import baekgwa.backend.model.user.User;
+import baekgwa.backend.model.user.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardServiceImpl implements BoardService {
 
     private final QuestionRepository questionRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     @Override
@@ -29,6 +36,17 @@ public class BoardServiceImpl implements BoardService {
             return getQuestionList(pageable, request.getKeyword());
         }
         return null;
+    }
+
+    @Transactional
+    @Override
+    public NewQuestion createNewQuestion(BoardRequest.NewQuestion request, String uuid) {
+        User user = userRepository.findByUuid(uuid).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_LOGIN_INFO));
+        Question newQuestion = Question.createNewQuestion(request.getSubject(), request.getContent(), user.getId());
+        Question savedQuestion = questionRepository.save(newQuestion);
+
+        return NewQuestion.builder().questionId(savedQuestion.getId()).build();
     }
 
     private BoardResponse.Content getQuestionList(Pageable pageable, String keyword) {

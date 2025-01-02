@@ -51,4 +51,14 @@ public class BoardResponse {
             this.author = author;
         }
     }
+
+    @Getter
+    public static class NewQuestion {
+        private final Long questionId;
+
+        @Builder
+        private NewQuestion(Long questionId) {
+            this.questionId = questionId;
+        }
+    }
 }

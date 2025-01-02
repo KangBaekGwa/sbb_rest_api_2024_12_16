@@ -1,5 +1,7 @@
 package baekgwa.backend.global.config;
 
+import baekgwa.backend.global.security.entrypoint.CustomAccessDeniedHandler;
+import baekgwa.backend.global.security.entrypoint.CustomAuthenticationEntryPoint;
 import baekgwa.backend.global.security.filter.JWTFilter;
 import baekgwa.backend.global.security.filter.LoginFilter;
 import baekgwa.backend.global.security.filter.ReissueJWTFilter;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,6 +39,10 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final RedisRepository redisRepository;
     private final ObjectMapper objectMapper;
+    private final JWTFilter jwtFilter;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+
     @Value("${spring.jwt.refresh.expiredTime}")
     private long refreshExpiredMs;
     @Value("${spring.jwt.access.expiredTime}")
@@ -69,8 +76,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
-        JWTFilter jwtFilter = new JWTFilter(jwtUtil, objectMapper);
-
         LoginFilter loginFilter = new LoginFilter(
                 authenticationManager(authenticationConfiguration), redisRepository, jwtUtil,
                 refreshExpiredMs, accessExpiredMs, objectMapper);
@@ -86,7 +91,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/admin").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/board/question").authenticated()
                         .anyRequest().permitAll())
+                .exceptionHandling((exception) -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint) //인증 오류
+                        .accessDeniedHandler(customAccessDeniedHandler)) //권한 부족
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)

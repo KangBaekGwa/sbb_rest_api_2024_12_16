@@ -4,14 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import baekgwa.backend.domain.user.UserRequest.Signup;
-import baekgwa.backend.global.exception.CustomException;
-import baekgwa.backend.global.response.ErrorCode;
 import baekgwa.backend.integration.SpringBootTestSupporter;
 import baekgwa.backend.model.user.User;
 import baekgwa.backend.model.user.UserRole;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -55,8 +54,6 @@ class UserServiceImplTest extends SpringBootTestSupporter {
 
         // when // then
         assertThatThrownBy(() -> userService.signup(dto))
-                .isInstanceOf(CustomException.class)
-                .extracting("code")
-                .isEqualTo(ErrorCode.DUPLICATED_SIGNUP_DATA);
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 }

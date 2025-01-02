@@ -36,4 +36,13 @@ public class Question extends BaseEntity {
         this.content = content;
         this.authorId = authorId;
     }
+
+    public static Question createNewQuestion(String subject, String content, Long authorId) {
+        return Question
+                .builder()
+                .subject(subject)
+                .content(content)
+                .authorId(authorId)
+                .build();
+    }
 }
