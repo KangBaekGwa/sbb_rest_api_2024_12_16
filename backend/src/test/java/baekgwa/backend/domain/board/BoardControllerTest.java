@@ -59,7 +59,7 @@ class BoardControllerTest extends MockControllerTestSupporter {
                 .map(Enum::name)
                 .toArray(String[]::new);
 
-        mockMvc.perform(get("/board/get-list")
+        mockMvc.perform(get("/board/list")
                         .queryParam("page", "1")
                         .queryParam("size", "10")
                         .queryParam("sort", "createDate")
@@ -87,7 +87,7 @@ class BoardControllerTest extends MockControllerTestSupporter {
                 .andExpect(jsonPath("$.data.hasPrevious").value(false))
                 .andExpect(jsonPath("$.data.last").value(false))
                 //문서 생성
-                .andDo(document("board/list",
+                .andDo(document("board/get-list",
                         queryParameters(
                                 parameterWithName("page").description("페이지 번호")
                                         .optional()
