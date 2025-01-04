@@ -3,11 +3,16 @@ ifndef::snippets[]
 endif::[]
 = 백과 BDD 서비스 API 문서
 :doctype: book
+:sectnums:
 :icons: font
-:source-highlighter: highlightjs
+:source-highlighter: prettify
 :toc: left
 :toclevels: 3
+:toc-title: API
 :sectlinks:
+
+Kang Seoung Uk <ksu9801@gmail.com>
+v1.0.0, 25.01.04
 
 [[User]]
 == 사용자 API

@@ -1,11 +1,8 @@
 [[list]]
 === 게시판 글 조회
 
-==== HTTP Request
 include::{snippets}/board/get-list/http-request.adoc[]
 include::{snippets}/board/get-list/query-parameters.adoc[]
-
-==== Http Response
 include::{snippets}/board/get-list/http-response.adoc[]
 include::{snippets}/board/get-list/response-fields.adoc[]
 
@@ -14,12 +11,9 @@ include::{snippets}/board/get-list/response-fields.adoc[]
 [[post-question]]
 === 질문 등록
 
-==== HTTP Request
 include::{snippets}/board/post-question/http-request.adoc[]
 include::{snippets}/board/post-question/request-headers.adoc[]
 include::{snippets}/board/post-question/request-fields.adoc[]
-
-==== Http Response
 include::{snippets}/board/post-question/http-response.adoc[]
 include::{snippets}/board/post-question/response-fields.adoc[]
 
@@ -28,11 +22,8 @@ include::{snippets}/board/post-question/response-fields.adoc[]
 [[get-question]]
 === 질문 조회
 
-==== HTTP Request
 include::{snippets}/board/get-question/http-request.adoc[]
 include::{snippets}/board/get-question/query-parameters.adoc[]
 include::{snippets}/board/get-question/path-parameters.adoc[]
-
-==== Http Response
 include::{snippets}/board/get-question/http-response.adoc[]
 include::{snippets}/board/get-question/response-fields.adoc[]
