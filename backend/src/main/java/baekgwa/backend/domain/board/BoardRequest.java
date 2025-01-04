@@ -6,6 +6,8 @@ import baekgwa.backend.model.category.CategoryType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +17,7 @@ public class BoardRequest {
 
     @Getter
     @Setter
-    public static class List {
+    public static class BoardList {
         @Min(value = 1, message = "페이지 번호는 1 이상이어야 합니다.")
         private int page = 1;
 
@@ -32,18 +34,24 @@ public class BoardRequest {
     }
 
     @Getter
-    @NoArgsConstructor
+    @Builder
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class NewQuestion {
         @Size(min = 1, max = 200, message = "제목은 1글자 이상, 200자 미만 입니다.")
         private String subject;
 
         @NotBlank(message = "질문 내용은 필수값 입니다.")
         private String content;
+    }
 
-        @Builder
-        private NewQuestion(String subject, String content) {
-            this.subject = subject;
-            this.content = content;
-        }
+    @Getter
+    @Setter
+    public static class AnswerList {
+        @Min(value = 1, message = "페이지 번호는 1 이상이어야 합니다.")
+        private int page = 1;
+
+        @Min(value = 1, message = "페이지 사이즈는 1 이상이어야 합니다.")
+        private int size = 10;
     }
 }

@@ -2,6 +2,7 @@ package baekgwa.backend.integration;
 
 import baekgwa.backend.domain.board.BoardService;
 import baekgwa.backend.domain.user.UserService;
+import baekgwa.backend.integration.factory.TestDataFactory;
 import baekgwa.backend.model.answer.AnswerRepository;
 import baekgwa.backend.model.question.QuestionRepository;
 import baekgwa.backend.model.user.UserRepository;
@@ -35,4 +36,7 @@ public abstract class SpringBootTestSupporter {
 
     @Autowired
     protected PasswordEncoder passwordEncoder;
+
+    @Autowired
+    protected TestDataFactory testDataFactory;
 }

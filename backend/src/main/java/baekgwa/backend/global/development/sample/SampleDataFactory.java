@@ -31,12 +31,11 @@ public class SampleDataFactory {
     @EventListener(ApplicationReadyEvent.class)
     protected void registerSampleData() {
         addTestUser();
-        addQuestion();
-        addAnswer();
+        addQuestionAndAnswer();
     }
 
     private void addTestUser() {
-        User user = User.builder()
+        User testUser1 = User.builder()
                 .loginId("test")
                 .username("테스터")
                 .email("test@test.com")
@@ -45,35 +44,44 @@ public class SampleDataFactory {
                 .uuid(UUID.randomUUID().toString())
                 .build();
 
-        userRepository.save(user);
+        User testUser2 = User.builder()
+                .loginId("test2")
+                .username("테스터2")
+                .email("test2@test.com")
+                .password(passwordEncoder.encode("1234"))
+                .role(UserRole.ROLE_USER)
+                .uuid(UUID.randomUUID().toString())
+                .build();
+
+        userRepository.save(testUser1);
+        userRepository.save(testUser2);
     }
 
-    private void addQuestion() {
+    private void addQuestionAndAnswer() {
         String subject = "번 질문 제목입니다.";
         String content = "번 상세 질문 내용입니다.";
+
+        User questionUser = userRepository.findByLoginId("test").get();
+        User answerUser = userRepository.findByLoginId("test2").get();
+
+        Random random = new Random();
 
         for(int i=1; i<=100; i++) {
             Question question = Question
                     .builder()
                     .subject(i + subject)
                     .content(i + content)
-                    .authorId(1L)
+                    .authorId(questionUser.getId())
                     .build();
-
             questionRepository.save(question);
-        }
-    }
 
-    private void addAnswer() {
-        for(int i=1; i<=100; i++) {
-            int randomCount = new Random().nextInt(5, 20);
+            int randomCount = random.nextInt(5, 20);
             for(int j=1; j<randomCount; j++) {
-                Question question = questionRepository.findById((long) i).get();
                 Answer answer = Answer
                         .builder()
                         .content(i + "질문에 대한 " + j + "번째 답변")
                         .question(question)
-                        .authorId(1L)
+                        .authorId(answerUser.getId())
                         .build();
 
                 answerRepository.save(answer);

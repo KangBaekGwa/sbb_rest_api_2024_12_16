@@ -12,13 +12,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Answer extends BaseEntity {
 
     @Id
@@ -35,11 +38,12 @@ public class Answer extends BaseEntity {
     @Column(nullable = false)
     private Long authorId;
 
-    @Builder
-    private Answer(Long id, String content, Question question, Long authorId) {
-        this.id = id;
-        this.content = content;
-        this.question = question;
-        this.authorId = authorId;
+    public static Answer createNewAnswer(String content, Question question, Long authorId) {
+        return Answer
+                .builder()
+                .content(content)
+                .question(question)
+                .authorId(authorId)
+                .build();
     }
 }

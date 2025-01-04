@@ -17,6 +17,9 @@ public enum ErrorCode {
     NEED_LOGIN(HttpStatus.UNAUTHORIZED, Boolean.FALSE, 1004, "로그인이 필요한 API 입니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, Boolean.FALSE, 1004, "로그인이 필요한 API 입니다."),
 
+    //2000 ~ 3000
+    NOT_FOUND_QUESTION(HttpStatus.NOT_FOUND, Boolean.FALSE, 2000, "질문 정보를 찾을 수 없습니다."),
+
     //9000 ~ 9999
     //오류 종류 : 공통 에러
     VALIDATION_FAIL_ERROR(HttpStatus.BAD_REQUEST, Boolean.FALSE, 9000, "(exception error 메세지에 따름)"),

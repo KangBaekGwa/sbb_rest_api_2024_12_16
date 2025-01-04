@@ -1,6 +1,5 @@
 package baekgwa.backend.domain.board;
 
-import baekgwa.backend.domain.board.BoardResponse.NewQuestion;
 import baekgwa.backend.global.response.BaseResponse;
 import baekgwa.backend.global.response.SuccessCode;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +8,7 @@ import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public class BoardController {
 
     @GetMapping("/list")
     public BaseResponse<BoardResponse.Content> getBoardList(
-            @Valid @ModelAttribute BoardRequest.List request,
+            @Valid @ModelAttribute BoardRequest.BoardList request,
             HttpServletResponse response
     ) {
         BoardResponse.Content list = boardService.getList(request);
@@ -38,5 +38,15 @@ public class BoardController {
     ) {
         BoardResponse.NewQuestion responseData = boardService.createNewQuestion(newQuestion, principal.getName());
         return BaseResponse.ok(response, SuccessCode.CREATE_NEW_QUESTION_SUCCESS, responseData);
+    }
+
+    @GetMapping("/question/{questionId}")
+    public BaseResponse<BoardResponse.QuestionDetails> getQuestion (
+            @Valid @ModelAttribute BoardRequest.AnswerList request,
+            @PathVariable(value = "questionId") long questionId,
+            HttpServletResponse response
+    ) {
+        BoardResponse.QuestionDetails responseData = boardService.getQuestion(request, questionId);
+        return BaseResponse.ok(response, SuccessCode.FIND_QUESTION_DETAIL_SUCCESS, responseData);
     }
 }

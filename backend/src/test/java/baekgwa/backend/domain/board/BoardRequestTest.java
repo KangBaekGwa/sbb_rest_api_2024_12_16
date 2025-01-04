@@ -2,13 +2,15 @@ package baekgwa.backend.domain.board;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import baekgwa.backend.domain.board.BoardRequest.List;
+import baekgwa.backend.domain.board.BoardRequest.AnswerList;
+import baekgwa.backend.domain.board.BoardRequest.BoardList;
 import baekgwa.backend.domain.board.BoardRequest.NewQuestion;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import java.util.Set;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,21 +18,29 @@ import org.junit.jupiter.api.Test;
 class BoardRequestTest {
 
     private static Validator validator;
+    private static ValidatorFactory validatorFactory;
 
     @BeforeAll
     static void setupValidator() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
+    @AfterAll
+    static void cleanUpValidator() {
+        if (validatorFactory != null) {
+            validatorFactory.close();
+        }
     }
 
     @DisplayName("게시판 리스트 조회 request dto 검증")
     @Test
     void list1() {
         // given
-        BoardRequest.List request = new BoardRequest.List();
+        BoardList request = new BoardList();
 
         // when
-        Set<ConstraintViolation<List>> validate = validator.validate(request);
+        Set<ConstraintViolation<BoardList>> validate = validator.validate(request);
 
         // then
         assertThat(validate).hasSize(0);
@@ -40,14 +50,14 @@ class BoardRequestTest {
     @Test
     void list2() {
         // given
-        BoardRequest.List request = new BoardRequest.List();
+        BoardList request = new BoardList();
         request.setSize(0);
         request.setPage(0);
         request.setSort("이상한 정렬조건");
         request.setCategory("이상한 카테고리");
 
         // when
-        Set<ConstraintViolation<List>> validate = validator.validate(request);
+        Set<ConstraintViolation<BoardList>> validate = validator.validate(request);
 
         // then
         assertThat(validate).hasSize(4);
@@ -71,13 +81,39 @@ class BoardRequestTest {
     @Test
     void NewQuestion2() {
         // given
-        StringBuilder subject = new StringBuilder();
-        for(int i=1; i<=201; i++) subject.append("o");
         BoardRequest.NewQuestion request = BoardRequest.NewQuestion
-                .builder().subject(subject.toString()).content("").build();
+                .builder().subject("o".repeat(201)).content("").build();
 
         // when
         Set<ConstraintViolation<NewQuestion>> validate = validator.validate(request);
+
+        // then
+        assertThat(validate).hasSize(2);
+    }
+
+    @DisplayName("상세 질문 조회 request default 검증")
+    @Test
+    void AnswerList1() {
+        // given
+        BoardRequest.AnswerList answerList = new BoardRequest.AnswerList();
+
+        // when
+        Set<ConstraintViolation<AnswerList>> validate = validator.validate(answerList);
+
+        // then
+        assertThat(validate).hasSize(0);
+    }
+
+    @DisplayName("상세 질문 조회 시, 답변 페이징 번호는 1번부터, 사이즈는 1 이상이어야 합니다.")
+    @Test
+    void AnswerList2() {
+        // given
+        BoardRequest.AnswerList answerList = new BoardRequest.AnswerList();
+        answerList.setPage(0);
+        answerList.setSize(0);
+
+        // when
+        Set<ConstraintViolation<AnswerList>> validate = validator.validate(answerList);
 
         // then
         assertThat(validate).hasSize(2);
