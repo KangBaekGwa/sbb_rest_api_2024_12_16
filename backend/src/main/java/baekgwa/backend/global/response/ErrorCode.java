@@ -15,7 +15,7 @@ public enum ErrorCode {
     NOT_SUPPORTED_LOGIN_METHOD(HttpStatus.METHOD_NOT_ALLOWED, Boolean.FALSE, 1002, "잘못된 로그인 요청 Method"),
     INVALID_LOGIN_INFO(HttpStatus.UNAUTHORIZED, Boolean.FALSE, 1003, "유효하지 않은 로그인 정보 입니다."),
     NEED_LOGIN(HttpStatus.UNAUTHORIZED, Boolean.FALSE, 1004, "로그인이 필요한 API 입니다."),
-    FORBIDDEN(HttpStatus.FORBIDDEN, Boolean.FALSE, 1004, "로그인이 필요한 API 입니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, Boolean.FALSE, 1004, "권한이 부족한 API 입니다."),
 
     //2000 ~ 3000
     NOT_FOUND_QUESTION(HttpStatus.NOT_FOUND, Boolean.FALSE, 2000, "질문 정보를 찾을 수 없습니다."),
