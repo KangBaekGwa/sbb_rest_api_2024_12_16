@@ -54,4 +54,13 @@ public class BoardRequest {
         @Min(value = 1, message = "페이지 사이즈는 1 이상이어야 합니다.")
         private int size = 10;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class NewAnswer {
+        @NotBlank(message = "답변 내용은 필수값 입니다.")
+        private String content;
+    }
 }

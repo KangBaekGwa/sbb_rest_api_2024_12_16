@@ -2,9 +2,11 @@ package baekgwa.backend.domain.board;
 
 import baekgwa.backend.domain.board.BoardRequest.BoardList;
 import baekgwa.backend.domain.board.BoardResponse.AnswerDetails;
+import baekgwa.backend.domain.board.BoardResponse.NewAnswer;
 import baekgwa.backend.domain.board.BoardResponse.NewQuestion;
 import baekgwa.backend.global.exception.CustomException;
 import baekgwa.backend.global.response.ErrorCode;
+import baekgwa.backend.model.answer.Answer;
 import baekgwa.backend.model.answer.AnswerRepository;
 import baekgwa.backend.model.answer.projection.AnswerProjection;
 import baekgwa.backend.model.category.CategoryType;
@@ -13,6 +15,7 @@ import baekgwa.backend.model.question.QuestionRepository;
 import baekgwa.backend.model.question.projection.QuestionProjection;
 import baekgwa.backend.model.user.User;
 import baekgwa.backend.model.user.UserRepository;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +32,7 @@ public class BoardServiceImpl implements BoardService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final AnswerRepository answerRepository;
+    private final EntityManager entityManager;
 
     @Transactional(readOnly = true)
     @Override
@@ -45,14 +49,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public NewQuestion createNewQuestion(BoardRequest.NewQuestion request, String uuid) {
+    public BoardResponse.NewQuestion createNewQuestion(BoardRequest.NewQuestion request, String uuid) {
         User user = userRepository.findByUuid(uuid).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_LOGIN_INFO));
         Question newQuestion = Question.createNewQuestion(request.getSubject(),
                 request.getContent(), user.getId());
         Question savedQuestion = questionRepository.save(newQuestion);
 
-        return NewQuestion.builder().questionId(savedQuestion.getId()).build();
+        return BoardResponse.NewQuestion.from(savedQuestion.getId());
     }
 
     @Transactional(readOnly = true)
@@ -71,6 +75,23 @@ public class BoardServiceImpl implements BoardService {
         AnswerDetails findAnswer = AnswerDetails.from(findAnswerList);
 
         return BoardResponse.QuestionDetails.from(findQuestion, findAnswer);
+    }
+
+    @Transactional
+    @Override
+    public BoardResponse.NewAnswer createNewAnswer(BoardRequest.NewAnswer request, long questionId, String uuid) {
+
+        User findUser = userRepository.findByUuid(uuid).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_LOGIN_INFO));
+
+        Answer newAnswer = Answer.createNewAnswer(
+                request.getContent(),
+                entityManager.getReference(Question.class, questionId),
+                findUser.getId()
+        );
+
+        Answer saveAnswer = answerRepository.save(newAnswer);
+        return BoardResponse.NewAnswer.from(saveAnswer.getId());
     }
 
     private BoardResponse.Content getQuestionList(Pageable pageable, String keyword) {

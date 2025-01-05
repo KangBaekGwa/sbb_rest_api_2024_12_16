@@ -66,6 +66,10 @@ public class BoardResponse {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class NewQuestion {
         private final Long questionId;
+
+        public static NewQuestion from(Long id) {
+            return NewQuestion.builder().questionId(id).build();
+        }
     }
 
     @Getter
@@ -141,6 +145,17 @@ public class BoardResponse {
                             .author(answer.username())
                             .build())
                     .toList();
+        }
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class NewAnswer {
+        private final Long answerId;
+
+        public static NewAnswer from(Long id) {
+            return NewAnswer.builder().answerId(id).build();
         }
     }
 }

@@ -9,4 +9,6 @@ public interface BoardService {
     BoardResponse.NewQuestion createNewQuestion(BoardRequest.NewQuestion newQuestion, String uuid);
 
     BoardResponse.QuestionDetails getQuestion(BoardRequest.AnswerList request, long questionId);
+
+    BoardResponse.NewAnswer createNewAnswer(BoardRequest.NewAnswer request, long questionId, String uuid);
 }

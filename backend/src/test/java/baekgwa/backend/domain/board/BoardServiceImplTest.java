@@ -163,4 +163,25 @@ class BoardServiceImplTest extends SpringBootTestSupporter {
         // 답변 상세 내용 검증
         assertThat(findData.getAnswerDetails().getAnswerInfos()).isEmpty();
     }
+
+    @DisplayName("질문에 대한 새로운 답변을 등록합니다.")
+    @Test
+    void createNewAnswer() {
+        // given
+        Object[] savedData = testDataFactory.createUserAndQuestionAndAnswer(1, 1, 0, 0);
+        User savedUser = (User) savedData[0];
+        Question savedQuestion = (Question) savedData[1];
+        BoardRequest.NewAnswer request = BoardRequest.NewAnswer.builder().content("답변").build();
+
+        // when
+        BoardResponse.NewAnswer newAnswer =
+                boardService.createNewAnswer(request, savedQuestion.getId(), savedUser.getUuid());
+
+        // then
+        Optional<Answer> findData = answerRepository.findById(newAnswer.getAnswerId());
+        assertThat(findData).isPresent();
+        assertThat(findData.get())
+                .extracting("id", "content", "authorId")
+                .containsExactly(newAnswer.getAnswerId(), "답변", savedUser.getId());
+    }
 }

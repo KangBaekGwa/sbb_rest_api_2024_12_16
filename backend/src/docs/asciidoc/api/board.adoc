@@ -27,3 +27,15 @@ include::{snippets}/board/get-question/query-parameters.adoc[]
 include::{snippets}/board/get-question/path-parameters.adoc[]
 include::{snippets}/board/get-question/http-response.adoc[]
 include::{snippets}/board/get-question/response-fields.adoc[]
+
+---
+
+[[post-answer]]
+=== 답변 등록
+
+include::{snippets}/board/post-answer/http-request.adoc[]
+include::{snippets}/board/post-answer/request-headers.adoc[]
+include::{snippets}/board/post-answer/path-parameters.adoc[]
+include::{snippets}/board/post-answer/request-fields.adoc[]
+include::{snippets}/board/post-answer/http-response.adoc[]
+include::{snippets}/board/post-answer/response-fields.adoc[]

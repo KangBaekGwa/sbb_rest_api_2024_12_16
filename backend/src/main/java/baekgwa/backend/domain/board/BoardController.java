@@ -43,10 +43,21 @@ public class BoardController {
     @GetMapping("/question/{questionId}")
     public BaseResponse<BoardResponse.QuestionDetails> getQuestion (
             @Valid @ModelAttribute BoardRequest.AnswerList request,
-            @PathVariable(value = "questionId") long questionId,
+            @PathVariable("questionId") long questionId,
             HttpServletResponse response
     ) {
         BoardResponse.QuestionDetails responseData = boardService.getQuestion(request, questionId);
         return BaseResponse.ok(response, SuccessCode.FIND_QUESTION_DETAIL_SUCCESS, responseData);
+    }
+
+    @PostMapping("/{questionId}/answer")
+    public BaseResponse<BoardResponse.NewAnswer> createNewAnswer (
+            @Valid @RequestBody BoardRequest.NewAnswer request,
+            @PathVariable("questionId") long questionId,
+            Principal principal,
+            HttpServletResponse response
+    ) {
+        BoardResponse.NewAnswer responseData = boardService.createNewAnswer(request, questionId, principal.getName());
+        return BaseResponse.ok(response, SuccessCode.CREATE_NEW_ANSWER_SUCCESS, responseData);
     }
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import baekgwa.backend.domain.board.BoardRequest.AnswerList;
 import baekgwa.backend.domain.board.BoardRequest.BoardList;
+import baekgwa.backend.domain.board.BoardRequest.NewAnswer;
 import baekgwa.backend.domain.board.BoardRequest.NewQuestion;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -117,5 +118,44 @@ class BoardRequestTest {
 
         // then
         assertThat(validate).hasSize(2);
+    }
+
+    @DisplayName("답변 등록 시, 내용값은 필수 입니다. 필수 값 입니다.")
+    @Test
+    void NewAnswer1() {
+        // given
+        BoardRequest.NewAnswer newAnswer = BoardRequest.NewAnswer.builder().build();
+
+        // when
+        Set<ConstraintViolation<NewAnswer>> validate = validator.validate(newAnswer);
+
+        // then
+        assertThat(validate).hasSize(1);
+    }
+
+    @DisplayName("답변 등록 시, 내용값은 필수 입니다. 공백은 허용되지 않습니다.")
+    @Test
+    void NewAnswer2() {
+        // given
+        BoardRequest.NewAnswer newAnswer = BoardRequest.NewAnswer.builder().content("").build();
+
+        // when
+        Set<ConstraintViolation<NewAnswer>> validate = validator.validate(newAnswer);
+
+        // then
+        assertThat(validate).hasSize(1);
+    }
+
+    @DisplayName("답변 등록 시, 내용값은 필수 입니다. 띄워쓰기만 넣은 것도 허용되지 않습니다.")
+    @Test
+    void NewAnswer3() {
+        // given
+        BoardRequest.NewAnswer newAnswer = BoardRequest.NewAnswer.builder().content("     ").build();
+
+        // when
+        Set<ConstraintViolation<NewAnswer>> validate = validator.validate(newAnswer);
+
+        // then
+        assertThat(validate).hasSize(1);
     }
 }

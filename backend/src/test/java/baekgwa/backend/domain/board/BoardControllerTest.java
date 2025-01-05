@@ -37,8 +37,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 class BoardControllerTest extends MockControllerTestSupporter {
 
@@ -160,11 +158,6 @@ class BoardControllerTest extends MockControllerTestSupporter {
     @WithCustomUser
     @Test
     void createNewQuestion() throws Exception {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authentication: " + authentication);
-        System.out.println("Principal: " + authentication.getPrincipal());
-
         // given
         BoardRequest.NewQuestion request = NewQuestion
                 .builder()
@@ -303,34 +296,101 @@ class BoardControllerTest extends MockControllerTestSupporter {
                                         .description("질문 작성자"),
                                 fieldWithPath("data.answerDetails").type(JsonFieldType.OBJECT)
                                         .description("질문에 대한 답변 목록"),
-                                fieldWithPath("data.answerDetails.answerInfos").type(JsonFieldType.ARRAY)
+                                fieldWithPath("data.answerDetails.answerInfos").type(
+                                                JsonFieldType.ARRAY)
                                         .description("답변 목록"),
-                                fieldWithPath("data.answerDetails.answerInfos[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.answerDetails.answerInfos[].id").type(
+                                                JsonFieldType.NUMBER)
                                         .description("답변 식별 ID"),
-                                fieldWithPath("data.answerDetails.answerInfos[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("data.answerDetails.answerInfos[].content").type(
+                                                JsonFieldType.STRING)
                                         .description("답변 내용"),
-                                fieldWithPath("data.answerDetails.answerInfos[].modifyDate").type(JsonFieldType.STRING)
+                                fieldWithPath("data.answerDetails.answerInfos[].modifyDate").type(
+                                                JsonFieldType.STRING)
                                         .description("답변 질문 수정 날짜/시간"),
-                                fieldWithPath("data.answerDetails.answerInfos[].createdDate").type(JsonFieldType.STRING)
+                                fieldWithPath("data.answerDetails.answerInfos[].createdDate").type(
+                                                JsonFieldType.STRING)
                                         .description("답변 질문 생성 날짜/시간"),
-                                fieldWithPath("data.answerDetails.answerInfos[].author").type(JsonFieldType.STRING)
+                                fieldWithPath("data.answerDetails.answerInfos[].author").type(
+                                                JsonFieldType.STRING)
                                         .description("답변 답변 작성자"),
-                                fieldWithPath("data.answerDetails.currentPage").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.answerDetails.currentPage").type(
+                                                JsonFieldType.NUMBER)
                                         .description("답변 현재 페이지 번호"),
-                                fieldWithPath("data.answerDetails.totalPages").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.answerDetails.totalPages").type(
+                                                JsonFieldType.NUMBER)
                                         .description("답변 전체 페이지 수"),
-                                fieldWithPath("data.answerDetails.totalElements").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.answerDetails.totalElements").type(
+                                                JsonFieldType.NUMBER)
                                         .description("답변 전체 게시물 수"),
-                                fieldWithPath("data.answerDetails.pageSize").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.answerDetails.pageSize").type(
+                                                JsonFieldType.NUMBER)
                                         .description("답변 페이지 크기"),
-                                fieldWithPath("data.answerDetails.hasNext").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.answerDetails.hasNext").type(
+                                                JsonFieldType.BOOLEAN)
                                         .description("답변 다음 페이지 여부"),
-                                fieldWithPath("data.answerDetails.hasPrevious").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.answerDetails.hasPrevious").type(
+                                                JsonFieldType.BOOLEAN)
                                         .description("답변 이전 페이지 여부"),
                                 fieldWithPath("data.answerDetails.last").type(JsonFieldType.BOOLEAN)
                                         .description("답변 마지막 페이지 여부")
-                                )
+                        )
                 ));
+    }
+
+    @DisplayName("[Docs] 신규 답변 등록")
+    @WithCustomUser
+    @Test
+    void createNewAnswer() throws Exception {
+        // given
+        BoardRequest.NewAnswer request = BoardRequest.NewAnswer.builder().content("답변 내용").build();
+        BoardResponse.NewAnswer response = BoardResponse.NewAnswer.builder().answerId(1L).build();
+
+        // stubbing
+        BDDMockito
+                .when(boardService.createNewAnswer(any(), anyLong(), anyString()))
+                .thenReturn(response);
+
+        // when // then
+        mockMvc.perform(post("/board/{questionId}/answer", 1)
+                        .header("access", "your-access-token")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.isSuccess").value(
+                        SuccessCode.CREATE_NEW_ANSWER_SUCCESS.getIsSuccess()))
+                .andExpect(jsonPath("$.message").value(
+                        SuccessCode.CREATE_NEW_ANSWER_SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.code").value(
+                        SuccessCode.CREATE_NEW_ANSWER_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.data.answerId").value(response.getAnswerId()))
+                //문서 생성
+                .andDo(document("board/post-answer",
+                        requestHeaders(
+                                headerWithName("access").description("your-access-token")
+                        ),
+                        pathParameters(
+                                parameterWithName("questionId").description("질문 식별 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("content").type(JsonFieldType.STRING)
+                                        .description("답변 내용")
+                                        .attributes(key("validity").value("답변 내용은 필수값 입니다."))
+                        ),
+                        responseFields(
+                                fieldWithPath("isSuccess").type(JsonFieldType.BOOLEAN)
+                                        .description("성공 여부"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("응답 메세지"),
+                                fieldWithPath("code").type(JsonFieldType.NUMBER)
+                                        .description("응답 코드"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터"),
+                                fieldWithPath("data.answerId").type(JsonFieldType.NUMBER)
+                                        .description("등록된 답변 식별 ID")
+                        ))
+                );
     }
 
     private List<BoardResponse.AnswerInfo> createAnswerInfos() {

@@ -37,3 +37,4 @@ out/
 .vscode/
 /application.env
 /src/main/generated/
+/.run/BackendApplication.run.xml

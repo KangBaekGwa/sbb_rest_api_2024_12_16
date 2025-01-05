@@ -92,6 +92,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/admin").authenticated()
                         .requestMatchers(HttpMethod.POST, "/board/question").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/board/{questionId}/answer").authenticated()
                         .anyRequest().permitAll())
                 .exceptionHandling((exception) -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint) //인증 오류
