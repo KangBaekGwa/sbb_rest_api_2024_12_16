@@ -4,3 +4,13 @@ include::{snippets}/user/signup/http-request.adoc[]
 include::{snippets}/user/signup/request-fields.adoc[]
 include::{snippets}/user/signup/http-response.adoc[]
 include::{snippets}/user/signup/response-fields.adoc[]
+
+---
+
+=== 로그인
+include::{snippets}/user/post-login/http-request.adoc[]
+include::{snippets}/user/post-login/request-fields.adoc[]
+include::{snippets}/user/post-login/http-response.adoc[]
+include::{snippets}/user/post-login/response-headers.adoc[]
+include::{snippets}/user/post-login/response-cookies.adoc[]
+include::{snippets}/user/post-login/response-fields.adoc[]

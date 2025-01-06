@@ -1,5 +1,6 @@
 package baekgwa.backend.global.config;
 
+import baekgwa.backend.global.constant.JwtConstants;
 import baekgwa.backend.global.security.entrypoint.CustomAccessDeniedHandler;
 import baekgwa.backend.global.security.entrypoint.CustomAuthenticationEntryPoint;
 import baekgwa.backend.global.security.filter.JWTFilter;
@@ -67,7 +68,7 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setMaxAge(3600L);
-        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+        configuration.setExposedHeaders(Collections.singletonList(JwtConstants.ACCESS));
 
         return request -> configuration;
     }

@@ -16,8 +16,8 @@ import baekgwa.backend.global.security.filter.JWTFilter;
 import baekgwa.backend.global.security.jwt.JWTUtil;
 import baekgwa.backend.global.security.user.CustomUserDetailService;
 import baekgwa.backend.model.redis.RedisRepository;
+import baekgwa.backend.model.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
@@ -25,7 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -43,6 +42,7 @@ import org.springframework.web.context.WebApplicationContext;
 @Import({
         SecurityConfig.class,
         JWTUtil.class,
+        CustomUserDetailService.class,
         CustomAuthenticationEntryPoint.class,
         CustomAccessDeniedHandler.class
 })
@@ -67,6 +67,9 @@ public abstract class MockControllerTestSupporter {
 
     @MockitoBean
     protected BoardService boardService;
+
+    @MockitoBean
+    protected UserRepository userRepository;
 
     @MockitoBean
     protected RedisRepository redisRepository;
